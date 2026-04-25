@@ -126,11 +126,11 @@ const handleSubmit = async (event: any) => {
             </button>
             <br /> <br />
             <button 
+              type="button"
               onClick={() => signIn("google", { callbackUrl, redirect: false})}
               className={styles.login__form__item__button}
-              disabled={isLoading}
               >
-                {isLoading ? "Loading..." : "Sign in with google"}
+                Sign in with google
             </button>
             <br /> <br />
             <button
