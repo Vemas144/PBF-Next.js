@@ -25,20 +25,24 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    if (pathname.startsWith("/editor")) {
-        const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
-        
-        if (!token) {
+   if (pathname.startsWith("/editor")) {
+    const token = await getToken({ 
+        req: request, 
+        secret: process.env.NEXTAUTH_SECRET 
+    });
+    
+    if (!token) {
         const url = new URL("/auth/login", request.url);
         url.searchParams.set("callbackUrl", encodeURIComponent(request.url));
         return NextResponse.redirect(url);
-        }
-        
-        // ✅ Editor + Admin boleh masuk
-        if (!["admin", "editor"].includes(token.role || "")) {
-        return NextResponse.redirect(new URL("/", request.url));
-        }
     }
+    
+    // Pastikan role dicek dengan benar
+    const role = token.role as string;
+    if (!["admin", "editor"].includes(role)) {
+        return NextResponse.redirect(new URL("/", request.url));
+    }
+}
     
     // 2. AUTH ROUTES - HARUS LOGIN SAJA (/produk, /about, /profile)
     if (["/produk", "/about", "/profile"].includes(pathname)) {
@@ -58,5 +62,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/produk", "/about", "/profile", "/editor"],
+    matcher: ["/admin/:path*", "/produk", "/about", "/profile", "/editor/:path*"],
 };
